@@ -1,0 +1,12 @@
+version: "3"
+services:
+  app:
+    build: .
+    ports:
+      - '3030:3000'
+    volumes:
+      - .:/app
+      - go_path:/go
+    command: ["./start.sh"]
+volumes:
+  go_path:
