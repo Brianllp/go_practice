@@ -1,3 +1,3 @@
-#!/bin/bash -eu
+#!/bin/sh -eu
 go mod tidy
 air

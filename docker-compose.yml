@@ -6,7 +6,23 @@ services:
       - '3030:3000'
     volumes:
       - .:/app
-      - go_path:/go
     command: ["./start.sh"]
+    depends_on:
+      - db
+  db:
+    image: mysql:8.0.21
+    platform: linux/x86_64
+    env_file:
+      - .env
+    volumes:
+      - db_data:/var/lib/mysql:cached
+    ports:
+      - '3333:3333'
+    command: --default-authentication-plugin=mysql_native_password
+    environment:
+      MYSQL_USER: '${DB_USER}'
+      MYSQL_PASSWORD: '${DB_PASS}'
+      MYSQL_ROOT_PASSWORD: '${MYSQL_ROOT_PASSWORD}'
+      MYSQL_DATABASE: '${DB_NAME}'
 volumes:
-  go_path:
+  db_data:
