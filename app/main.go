@@ -2,9 +2,12 @@ package main
 
 import (
 	"fmt"
+	"net/http"
 	"os"
 
 	godotnev "github.com/joho/godotenv"
+	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
@@ -13,6 +16,10 @@ type User struct {
 	gorm.Model
 	Name string
 	Age  int
+}
+
+func hello(c echo.Context) error {
+	return c.String(http.StatusOK, "Hello, World!")
 }
 
 func main() {
@@ -65,4 +72,13 @@ func main() {
 	}
 
 	fmt.Println(users)
+
+	e := echo.New()
+
+	e.Use(middleware.Logger())
+	e.Use(middleware.Recover())
+
+	e.GET("/", hello)
+
+	e.Logger.Fatal(e.Start(":3030"))
 }
