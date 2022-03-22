@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/Brianllp/go_practice/controllers"
 	"github.com/Brianllp/go_practice/database"
+	"github.com/Brianllp/go_practice/models"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 )
@@ -11,6 +12,8 @@ func main() {
 	e := echo.New()
 	database.ConnectDB()
 	defer database.CloseDB()
+
+	models.Migration(database.GetDB())
 
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
