@@ -18,6 +18,7 @@ func main() {
 	e.GET("/", controllers.Hello)
 	e.GET("/users", controllers.GetUsers)
 	e.GET("/users/:id", controllers.GetUser)
+	e.GET("/entries", controllers.GetEntries)
 
 	e.Logger.Fatal(e.Start(":3030"))
 }
