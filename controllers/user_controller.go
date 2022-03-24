@@ -5,14 +5,7 @@ import (
 
 	"github.com/Brianllp/go_practice/models"
 	"github.com/labstack/echo/v4"
-	"gorm.io/gorm"
 )
-
-type User struct {
-	gorm.Model
-	Name string `json:"name"`
-	Age  int    `json:"age"`
-}
 
 func GetUsers(c echo.Context) error {
 	users := models.GetUsers()
