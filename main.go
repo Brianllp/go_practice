@@ -1,27 +1,44 @@
 package main
 
 import (
-	"github.com/Brianllp/go_practice/controllers"
+	"context"
+	"fmt"
+	"os"
+	"os/signal"
+	"time"
+
 	"github.com/Brianllp/go_practice/database"
+	"github.com/Brianllp/go_practice/jobs"
 	"github.com/Brianllp/go_practice/models"
-	"github.com/labstack/echo/v4"
-	"github.com/labstack/echo/v4/middleware"
+	"github.com/Brianllp/go_practice/server"
 )
 
 func main() {
-	e := echo.New()
 	database.ConnectDB()
 	defer database.CloseDB()
 
 	models.Migration(database.GetDB())
 
-	e.Use(middleware.Logger())
-	e.Use(middleware.Recover())
+	// get entries in 5 minutes cycle
+	go func() {
+		jobs.GetContentfulEntries("get entries")
+	}()
 
-	e.GET("/", controllers.Hello)
-	e.GET("/users", controllers.GetUsers)
-	e.GET("/users/:id", controllers.GetUser)
-	e.GET("/entries", controllers.GetEntries)
+	e := server.NewRouter()
 
-	e.Logger.Fatal(e.Start(":3030"))
+	go func() {
+		if err := e.Start(":3030"); err != nil {
+			fmt.Printf("[Error]: %s", err)
+		}
+	}()
+
+	// Graceful Shutdown
+	quit := make(chan os.Signal, 1)
+	signal.Notify(quit, os.Interrupt)
+	<-quit
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	if err := e.Shutdown(ctx); err != nil {
+		e.Logger.Fatal(err)
+	}
 }

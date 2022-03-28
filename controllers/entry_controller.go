@@ -107,3 +107,34 @@ func GetEntries(c echo.Context) error {
 
 	return c.String(http.StatusOK, string(body))
 }
+
+func GetContentfulEntries() {
+	SPACE_ID := os.Getenv("CONTENTFUL_SPACE_ID")
+	API_KEY := os.Getenv("CONTENTFUL_DELIVERY_API_KEY")
+	ENVIRONMENT_ID := os.Getenv("CONTENTFUL_ENVIRONMENT_ID")
+
+	url := "https://cdn.contentful.com/spaces/" + SPACE_ID + "/environments/" + ENVIRONMENT_ID + "/entries?access_token=" + API_KEY
+
+	resp, err := http.Get(url)
+	if err != nil {
+		fmt.Println(err)
+	}
+	defer resp.Body.Close()
+	body, _ := io.ReadAll(resp.Body)
+
+	jsonBytes := []byte(body)
+	data := new(Response)
+
+	if err := json.Unmarshal(jsonBytes, data); err != nil {
+		fmt.Println("JSON Unmarshal error:", err)
+	}
+
+	for _, item := range data.Items {
+		uuid := item.Sys.ID
+		title := item.Fields.Title
+		body := item.Fields.Body.Content[0].Content[0].Value
+
+		entry := models.Entry{UUID: uuid, Title: title, Body: body}
+		models.CreateOrUpdateEntry(entry)
+	}
+}
