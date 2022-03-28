@@ -10,7 +10,7 @@ import (
 	"github.com/Brianllp/go_practice/database"
 	"github.com/Brianllp/go_practice/jobs"
 	"github.com/Brianllp/go_practice/models"
-	"github.com/Brianllp/go_practice/server"
+	"github.com/Brianllp/go_practice/router"
 )
 
 func main() {
@@ -24,7 +24,7 @@ func main() {
 		jobs.GetContentfulEntries("get entries")
 	}()
 
-	e := server.NewRouter()
+	e := router.NewRouter()
 
 	go func() {
 		if err := e.Start(":3030"); err != nil {

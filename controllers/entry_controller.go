@@ -138,3 +138,8 @@ func GetContentfulEntries() {
 		models.CreateOrUpdateEntry(entry)
 	}
 }
+
+func GetEntriesFromDB(c echo.Context) error {
+	entries := models.IndexEntries()
+	return c.JSON(http.StatusOK, entries)
+}
