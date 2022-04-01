@@ -14,7 +14,7 @@ import (
 )
 
 func main() {
-	database.ConnectDB()
+	database.ConnectDB(false)
 	defer database.CloseDB()
 
 	models.Migration(database.GetDB())
