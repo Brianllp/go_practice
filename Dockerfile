@@ -1,5 +1,8 @@
 FROM golang:1.17.6-alpine
 
+# to test
+ENV CGO_ENABLED 0
+
 RUN apk update && \
   apk --no-cache add git
 
