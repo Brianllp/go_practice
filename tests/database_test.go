@@ -6,11 +6,13 @@ import (
 	"testing"
 
 	"github.com/Brianllp/go_practice/database"
+	"github.com/Brianllp/go_practice/models"
 )
 
 func TestMain(m *testing.M) {
 	database.CreateTestDB()
 	database.ConnectTestDB()
+	models.Migration(database.GetTestDB())
 	defer database.CloseDB()
 
 	fmt.Println("before run")
@@ -18,6 +20,8 @@ func TestMain(m *testing.M) {
 	code := m.Run()
 
 	fmt.Println("after run")
+
+	database.DropTestDB()
 
 	os.Exit(code)
 }

@@ -48,3 +48,10 @@ func CloseTestDB() {
 	sqlDB, _ := test_db.DB()
 	sqlDB.Close()
 }
+
+func DropTestDB() {
+	db, _ := ConnectTestDB()
+	defer CloseDB()
+
+	db.Exec("DROP DATABASE IF EXISTS " + DBNAME)
+}
