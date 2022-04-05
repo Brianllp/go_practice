@@ -32,18 +32,6 @@ func TestFindUserByID(t *testing.T) {
 
 	created_user := models.FindUserByID(tx, "1")
 
-	// Todo: ルーティングのテスト
-	// e := router.NewRouter()
-	// req := httptest.NewRequest(http.MethodGet, "/users/1", nil)
-	// rec := httptest.NewRecorder()
-
-	// e.ServeHTTP(rec, req)
-
-	// created_user := rec.Body.String()
-	// fmt.Println(created_user)
-
-	// assert.Equal(t, http.StatusOK, rec.Code)
-
 	assert.Equal(t, user1.Name, created_user.Name)
 
 	// rollbackで生成したデータを削除
