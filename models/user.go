@@ -17,8 +17,7 @@ func GetUsers() (users []User) {
 	return users
 }
 
-func FindUserByID(id string) (user User) {
-	db := database.GetDB()
+func FindUserByID(db *gorm.DB, id string) (user User) {
 	db.Where("id = ?", id).First(&user)
 	return user
 }

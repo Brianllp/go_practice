@@ -8,6 +8,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/Brianllp/go_practice/database"
 	"github.com/Brianllp/go_practice/models"
 	"github.com/labstack/echo/v4"
 )
@@ -76,6 +77,8 @@ type Response struct {
 }
 
 func GetEntries(c echo.Context) error {
+	db, _ := database.ConnectDB(false)
+
 	SPACE_ID := os.Getenv("CONTENTFUL_SPACE_ID")
 	API_KEY := os.Getenv("CONTENTFUL_DELIVERY_API_KEY")
 	ENVIRONMENT_ID := os.Getenv("CONTENTFUL_ENVIRONMENT_ID")
@@ -102,13 +105,15 @@ func GetEntries(c echo.Context) error {
 		body := item.Fields.Body.Content[0].Content[0].Value
 
 		entry := models.Entry{UUID: uuid, Title: title, Body: body}
-		models.CreateOrUpdateEntry(entry)
+		models.CreateOrUpdateEntry(db, entry)
 	}
 
 	return c.String(http.StatusOK, string(body))
 }
 
 func GetContentfulEntries() {
+	db, _ := database.ConnectDB(false)
+
 	SPACE_ID := os.Getenv("CONTENTFUL_SPACE_ID")
 	API_KEY := os.Getenv("CONTENTFUL_DELIVERY_API_KEY")
 	ENVIRONMENT_ID := os.Getenv("CONTENTFUL_ENVIRONMENT_ID")
@@ -135,11 +140,13 @@ func GetContentfulEntries() {
 		body := item.Fields.Body.Content[0].Content[0].Value
 
 		entry := models.Entry{UUID: uuid, Title: title, Body: body}
-		models.CreateOrUpdateEntry(entry)
+		models.CreateOrUpdateEntry(db, entry)
 	}
 }
 
 func GetEntriesFromDB(c echo.Context) error {
-	entries := models.IndexEntries()
+	db, _ := database.ConnectDB(false)
+
+	entries := models.IndexEntries(db)
 	return c.JSON(http.StatusOK, entries)
 }

@@ -4,28 +4,32 @@ import (
 	"fmt"
 	"os"
 
-	godotnev "github.com/joho/godotenv"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
 
 var db *gorm.DB
 
-func ConnectDB() (*gorm.DB, error) {
-	// ENV読み取り
-	err_env := godotnev.Load(".env")
-	if err_env != nil {
-		fmt.Printf("読み込みに失敗しました: %v", err_env)
-	}
+func ConnectDB(is_root bool) (*gorm.DB, error) {
+	var (
+		USER   string
+		PASS   string
+		HOST   = "tcp(" + os.Getenv("CONTAINER_NAME") + ":" + os.Getenv("DB_PORT") + ")"
+		DBNAME = os.Getenv("DB_NAME")
+	)
 
 	// 接続情報を設定
-	USER := os.Getenv("DB_USER")
-	PASS := os.Getenv("DB_PASS")
-	HOST := "tcp(db:3306)"
-	DBNAME := os.Getenv("DB_NAME")
+	if is_root {
+		USER = os.Getenv("MYSQL_ROOT_USER")
+		PASS = os.Getenv("MYSQL_ROOT_PASSWORD")
+	} else {
+		USER = os.Getenv("DB_USER")
+		PASS = os.Getenv("DB_PASS")
+	}
 
 	dsn := USER + ":" + PASS + "@" + HOST + "/" + DBNAME + "?parseTime=true"
 
+	fmt.Printf("dsn is: %s \n", dsn)
 	// DBに接続
 	var err error
 	db, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
