@@ -4,7 +4,6 @@ import (
 	"errors"
 	"time"
 
-	"github.com/Brianllp/go_practice/database"
 	"gorm.io/gorm"
 )
 
@@ -17,14 +16,12 @@ type Entry struct {
 	UpdatedAt time.Time `json:"updatedAt"`
 }
 
-func IndexEntries() (entry Entry) {
-	db := database.GetDB()
+func IndexEntries(db *gorm.DB) (entry []Entry) {
 	db.Find(&entry)
 	return entry
 }
 
-func CreateOrUpdateEntry(entry Entry) {
-	db := database.GetDB()
+func CreateOrUpdateEntry(db *gorm.DB, entry Entry) {
 	resultData := Entry{}
 	record := db.First(&resultData, "uuid = ?", entry.UUID)
 	isNotExistEntryRecord := errors.Is(record.Error, gorm.ErrRecordNotFound)

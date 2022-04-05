@@ -19,6 +19,7 @@ func TestFindUserByID(t *testing.T) {
 	if err != nil {
 		fmt.Println(err)
 	}
+	defer database.CloseTestDB()
 	// トランザクションを貼る
 	tx := db.Begin()
 
